@@ -87,11 +87,7 @@ class BoidPool {
             // Only draw until we find a Boid that is not alive
             // since they are all at the front of the array
             if (!A.alive) break;
-            if (!A.draw()) {
-                A.reset();
-                this._pool.push((this._pool.splice(i, 1))[0]); // moves to end of array
-                i--; // since array indicies have changed
-            } // if
+            A.draw();
         } // for i
     } // animate function
 } // BoidPool class

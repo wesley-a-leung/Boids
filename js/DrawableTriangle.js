@@ -28,5 +28,12 @@ class DrawableTriangle extends Drawable {
      */
     drawTriangle() {
         // TODO
-    } // draw function    
+    } // draw function
+
+    /*
+     * Clears the triangle from the canvas.
+     */
+    clearTriangle() {
+        // TODO
+    } // clearTriangle function   
 } // DrawableTriangle class

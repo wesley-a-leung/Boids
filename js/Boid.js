@@ -17,6 +17,8 @@ class Boid extends DrawableTriangle {
     spawn(x, y, velocity) { 
         this.x = x;
         this.y = y;
+        this.height = 20;
+        this.width = 12;
         this.color = "#FFFFFF"
         this.velocity = velocity;
         this.alive = true;
@@ -38,16 +40,35 @@ class Boid extends DrawableTriangle {
     } // angleTo function
 
     /*
+     * Updates the Boid's x and y position based on the velocity.
+     */
+    updatePosition() {
+        // the Boid can be at most 2 times the Boid's height outside the canvas
+        this.x = (this.x + 2 * this.height + this.velocity.x) % (this.canvasWidth + 4 * this.height) - 2 * this.height;
+        this.y += (this.y + 2 * this.height + this.velocity.y) % (this.canvasHeight + 4 * this.height) - 2 * this.height;
+    } // updatePosition function
+
+    /*
      * Draws the Boid on the canvas.
      */
     draw() {
-        // TODO
+        this.clearTriangle();
+        this.updatePosition();
+        this.drawTriangle();
     } // draw function
 
     /*
      * Resets the Boid values, including erasing it from the canvas.
      */
     reset() {
-        // TODO
+        this.clearTriangle();
+        this.x = 0;
+        this.y = 0;
+        this.height = 0;
+        this.width = 0;
+        this.color = "#FFFFFF";
+        this.velocity = new Vector(0, 0);
+        this.alive = false;
+        this.clicked = false;
     } // reset function
 } // Boid class
