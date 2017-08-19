@@ -3,12 +3,25 @@
     <head>
         <link rel = "stylesheet" type = "text/css" href = "style/jquery-ui.min.css">
         <link rel = "stylesheet" type = "text/css" href = "style/style.css">
+        <!-- Modularizing code -->
         <script type = "text/javascript" src = "js/jquery-3.1.1.min.js"></script>
         <script type = "text/javascript" src = "js/jquery-ui.min.js"></script>
+        <script type = "text/javascript" src = "js/Point.js"></script>
+        <script type = "text/javascript" src = "js/Vector.js"></script>
+        <script type = "text/javascript" src = "js/Drawable.js"></script>
+        <script type = "text/javascript" src = "js/DrawableTriangle.js"></script>
+        <script type = "text/javascript" src = "js/Boid.js"></script>
+        <script type = "text/javascript" src = "js/BoidPool.js"></script>
+        <script type = "text/javascript" src = "js/Demo.js"></script>
         <script type = "text/javascript" src = "js/script.js"></script>
-        <title>Title</title>
+        <title>Boids</title>
     </head>
-    <body>
-        <p>Test</p>
+    <body onload = "init()">
+        <div id = "container">
+            <h1>Boids</h1>
+        </div>
+        <div id = "canvasContainter">
+            <canvas id = "demo" width = "900" height = "600"></canvas> <!-- Main canvas -->
+        </div>
     </body>
 </html>

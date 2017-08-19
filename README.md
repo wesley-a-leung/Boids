@@ -1,2 +1,2 @@
 # Boids
-Simulation of the Flocking Behaviour of Birds
+Simulation of the flocking behaviour of birds
