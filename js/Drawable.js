@@ -3,11 +3,10 @@
  */
 class Drawable {
     /*
-     * Initializes a drawabe object at an x, y position.
+     * Initializes a drawabe object at an x, y position (Point p).
      */
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
+    constructor(p) {
+        this.p = p;
     } // constructor
 
     // Define abstract function to be implemented in child objects

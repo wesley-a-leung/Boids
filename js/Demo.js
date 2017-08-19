@@ -20,6 +20,8 @@ class Demo {
         Drawable.prototype.canvasHeight = this.canvas.height;
         this.boidPool = new BoidPool(1000); // maximum of 1000 Boids can be displayed on screen (to prevent lag)
         this.boidPool.init();
+        this.boidPool.get(new Point(100, 100), new Vector(1, 1), "#FFFFFF");
+        // TODO Add Click Listeners
         return true;
     } // init function
 

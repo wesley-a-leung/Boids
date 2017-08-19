@@ -15,8 +15,7 @@ function init() {
  */
 function animate() {
     requestAnimFrame(animate);
-    if (demo.particlePool) demo.particlePool.animate(); // animates all the particles if the pool exists
-    if (demo.dummyParticle) demo.dummyParticle.animate(); // animates the dummy particle if it exists
+    if (demo.boidPool) demo.boidPool.animate(); // animates all the particles if the pool exists
 } // animate function
 
 /**

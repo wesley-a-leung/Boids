@@ -26,9 +26,9 @@ class BoidPool {
      * Grabs the last item in the list and initializes it and
      * pushes it to the front of the array.
      */
-    get(x, y, velocity) {
+    get(position, velocity, color) {
         if(!this._pool[this.size - 1].alive) {
-            this._pool[this.size - 1].spawn(x, y, velocity);
+            this._pool[this.size - 1].spawn(position, velocity, color);
             this._pool.unshift(this._pool.pop());
         } // if
     } // get function
@@ -61,13 +61,14 @@ class BoidPool {
      * Marks Boids for deletion given a click location. Take N time to complete where N is the number
      * of alive Boids.
      */
-    markClicked(xStart, yStart, xEnd, yEnd) {
+    markClicked(start, end) {
         for (let i = 1; i < this.size; i++) { // since the first Boid is the one being created, it should not be deleted
                                               // unless there is another Boid being deleted
             let A = this._pool[i]; // for non modification actions
             if (!A.alive) break; // all Boid afterward are 'dead'
             // if the both the start and end click location is inside the Boid, then the Boid has been clicked
-            if (A.inside(xStart, xEnd)) {
+            if (start.inside(A.a.rotate(A.angle), A.b.rotate(A.angle), A.c.rotate(A.angle)) &&
+                    end.inside(A.a.rotate(A.angle), A.b.rotate(A.angle), A.c.rotate(A.angle))) {
                 this._pool[i].clicked = true; // mark the Boid for deletion
                 this._pool[0].clicked = true; // also mark the Boid being spawned for deletion
                 break; // to prevent multiple deletions
@@ -76,12 +77,10 @@ class BoidPool {
     } // markClicked function
 
     /*
-     * Draws any in use Boids. If a Boid goes off the screen, it is reset and pushed to the end of the array.
+     * Draws any in use Boids.
      */
     animate() {
-        this.checkClick(); // first checks for Boids that have been clicked removes them if necessary
-        this.update(); // updates force vectors
-        this.checkCollision() // checks for Boids that have collided
+        this.checkClick(); // first checks for Boids that have been clicked and removes them if necessary
         for (let i = 0; i < this.size; i++) {
             let A = this._pool[i]; // for non modification actions
             // Only draw until we find a Boid that is not alive
