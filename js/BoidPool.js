@@ -77,6 +77,55 @@ class BoidPool {
     } // markClicked function
 
     /*
+     * Adjust the headings of boids to based on 3 rules.
+     * 1. Separation: Steer to avoid crowding local flockmates.
+     * 2. Alignment: Steer towards the average heading of local flockmates.
+     * 3. Cohesion: Steer to move toward the average position of local flockmates.
+     * A flock is any boid that can be reached by any number of jumps of the specified maximum distance.
+     * Takes N^2 time to complete where N is the number of alive Boids
+     */
+    adjustHeading() {
+        let countAlive = 0;
+        // count number of alive Boids
+        for (let i = 0; i < this.size; i++) {
+            if (!A.alive) break;
+            countAlive++;
+        } // for i
+        let G = new Graph(countAlive);
+        // construct graph
+        for (let i = 0; i < countAlive; i++) {
+            let A = this._pool[i];
+            for (let j = i + 1; j < countAlive; j++) {
+                let B = this._pool[j];
+                if (A.p.distTo(B.p) <= BoidPool.FLOCK_RADIUS) G.addEdge(i, j);
+            } // for j
+        } // for i
+        let cc = new ConnectedComponents(G);
+        for (let i = 0; i < cc.components.length; i++) {
+            let avgHeading = 0;
+            let avgPos = new Point(0, 0);
+            for (let j = 0; j < cc.components[i].length; j++) {
+                let A = this.__pool[j];
+                avgHeading += A.velocity.angle();
+                avgPos.x += A.p.x;
+                avgPos.y += A.p.y;
+            } // for j
+            avgHeading /= cc.components[i].length;
+            avgPos.x /= cc.components[i].length;
+            avgPox.y /= cc.components[i].length;
+            for (let j = 0; j < cc.components[i].length; j++) {
+                let A = this.__pool[j];
+                for (let k = j = 1; k < cc.components[i].length; k++) {
+                    let B = this.__pool[k];
+                    if (A.p.distTo(B.p) <= BoidPool.SEPARATION_DIST) {
+                        // TODO Adjust for separation
+                    }
+                } // for j
+            } // for j
+        } // for i
+    } // adjust function
+
+    /*
      * Draws any in use Boids.
      */
     animate() {
@@ -90,3 +139,6 @@ class BoidPool {
         } // for i
     } // animate function
 } // BoidPool class
+
+BoidPool.FLOCK_RADIUS = 20;
+BoidPool.SEPARATION_DIST = 5;
