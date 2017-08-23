@@ -119,7 +119,8 @@ class BoidPool {
                     let B = this.__pool[k];
                     if (A.p.distTo(B.p) <= BoidPool.SEPARATION_DIST) {
                         // TODO Adjust for separation
-                    }
+                        // Perhaps try transposing point to perpendicular of current heading?
+                    } // if
                 } // for j
             } // for j
         } // for i

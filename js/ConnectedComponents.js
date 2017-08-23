@@ -14,7 +14,6 @@ class ConnectedComponents {
         } // for i
     } // dfs function
 
-
     /*
      * Computes the connected components of the undirected graph.
      */
