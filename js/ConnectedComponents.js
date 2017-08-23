@@ -7,10 +7,10 @@ class ConnectedComponents {
     dfs(G, v) {
         this.marked[v] = true;
         this.id[v] = this.count;
-        this.component[count].push(v);
+        this.components[this.count].push(v);
         for (let i = 0; i < G.adj[v].length; i++) {
             let w = G.adj[v][i];
-            if (!this.marked[w]) dfs(G, w);
+            if (!this.marked[w]) this.dfs(G, w);
         } // for i
     } // dfs function
 
@@ -20,15 +20,15 @@ class ConnectedComponents {
     constructor(G) {
         this.marked = [];
         this.id = [];
-        this.component = [];
+        this.components = [];
         for (let v = 0; v < G.V; v++) {
             this.marked.push(false);
             this.id.push(0);
         } // for v
-        this.count = 0
+        this.count = 0;
         for (let v = 0; v < G.V; v++) {
             if (!this.marked[v]) {
-                this.component.push([]);
+                this.components.push([]);
                 this.dfs(G, v);
                 this.count++;
             } // if

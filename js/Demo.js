@@ -20,8 +20,10 @@ class Demo {
         Drawable.prototype.canvasHeight = this.canvas.height;
         this.boidPool = new BoidPool(1000); // maximum of 1000 Boids can be displayed on screen (to prevent lag)
         this.boidPool.init();
-        this.boidPool.get(new Point(100, 100), new Vector(1, 1), "#FFFFFF");
-        // TODO Add Click Listeners
+        this.canvas.addEventListener('click', function(event) { // spawns a particle on click if shift is not down
+                                                                // deletes a particle on click if shift is down
+            demo.boidPool.get(new Point(event.pageX - this.offsetLeft, event.pageY - this.offsetTop));
+        }); // anon function (click)
         return true;
     } // init function
 

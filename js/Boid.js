@@ -14,8 +14,8 @@ class Boid extends DrawableTriangle {
     /*
      * Spawns the Boid with the corresponding values.
      */
-    spawn(position, velocity, color) { 
-        this.p = position;
+    spawn(position, velocity, color) {
+        this.p = new Point(position.x, position.y);
         this.height = 20;
         this.width = 12;
         this.color = color;
@@ -55,15 +55,12 @@ class Boid extends DrawableTriangle {
     /*
      * Updates the Boid's velocity and rotates the triangle.
      */
-    updateVelocity() {
-        // TODO Implement Rules
-        let oldAngle = this.velocity.angle();
-        let newAngle = this.velocity.angle();
-        let theta = newAngle - oldAngle;
+    adjustHeading(theta) {
+        this.velocity.rotate(theta);
         this.a.rotate(this.p, theta);
         this.b.rotate(this.p, theta);
         this.c.rotate(this.p, theta);
-    } // updateVelocity function
+    } // adjustHeading function
 
     /*
      * Draws the Boid on the canvas.
@@ -71,7 +68,6 @@ class Boid extends DrawableTriangle {
     draw() {
         this.clearTriangle(); // clear the Boid at the old location
         this.updatePosition();
-        this.updateVelocity();
         this.drawTriangle(); // draws the Boid at the new loation
     } // draw function
 

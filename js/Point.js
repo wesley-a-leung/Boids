@@ -10,12 +10,19 @@
         this.y = y;
     } // constructor
 
-        /*
+    /*
+     * Returns the distance between this Point and that Point.
+     */
+    distTo(that) {
+        return Math.sqrt((this.x - that.x) * (this.x - that.x) + (this.y - that.y) * (this.y - that.y));
+    } // distTo function
+
+    /*
      * Returns the distance squared between this Point and that Point.
      */
     distSqTo(that) {
         return (this.x - that.x) * (this.x - that.x) + (this.y - that.y) * (this.y - that.y);
-    } // calcDistSq function
+    } // distSqTo function
 
     /*
      * Returns the angle from this Point to that Point.
@@ -29,7 +36,7 @@
      */
     r() {
         return Math.sqrt(this.x * this.x + this.y * this.y);
-    } // magnitude function
+    } // r function
 
     /*
      * Returns the polar angle (between -pi and pi) of the point.

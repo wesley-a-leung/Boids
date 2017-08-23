@@ -31,4 +31,14 @@ class Vector {
     plus(that) {
         return new Vector(this.x + that.x, this.y + that.y);
     } // plus function
+
+    /*
+     * Rotates this vector theta degrees around origin.
+     */
+    rotate(theta) {
+        let xPrime = this.x * Math.cos(theta) - this.y * Math.sin(theta);
+        let yPrime = this.x * Math.sin(theta) + this.y * Math.cos(theta);
+        this.x = xPrime;
+        this.y = yPrime;
+    } // rotate function
 } // Vector class

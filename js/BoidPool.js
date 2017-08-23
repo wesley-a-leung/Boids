@@ -26,8 +26,29 @@ class BoidPool {
      * Grabs the last item in the list and initializes it and
      * pushes it to the front of the array.
      */
-    get(position, velocity, color) {
-        if(!this._pool[this.size - 1].alive) {
+    get(position) {
+        let avgVelocity = new Vector(0, 0);
+        let avgLocalVelocity = new Vector(0, 0);
+        let countAlive = 0;
+        let countLocal = 0;
+        for (let i = 0; i < this.size; i++) {
+            let A = this._pool[i];
+            if (!A.alive) break; // all Boids afterward are 'dead'
+            if (position.distTo(A.p) <= BoidPool.FLOCK_RADIUS) {
+                countLocal++;
+                avgLocalVelocity = avgLocalVelocity.plus(A.velocity);
+            } // if
+            countAlive++;
+            avgVelocity = avgVelocity.plus(A.velocity);
+        } // for i
+        let velocity = new Vector(1, 1);
+        if (countLocal > 0) {
+            velocity = new Vector(avgLocalVelocity.x / countLocal, avgLocalVelocity.y / countLocal);
+        } else if (countAlive > 0) {
+            velocity = new Vector(avgVelocity.x / countAlive, avgVelocity.y / countAlive);
+        } // if
+        let color = "#FFFFFF";
+        if (!this._pool[this.size - 1].alive) {
             this._pool[this.size - 1].spawn(position, velocity, color);
             this._pool.unshift(this._pool.pop());
         } // if
@@ -84,13 +105,15 @@ class BoidPool {
      * A flock is any boid that can be reached by any number of jumps of the specified maximum distance.
      * Takes N^2 time to complete where N is the number of alive Boids
      */
-    adjustHeading() {
+    adjustHeadings() {
         let countAlive = 0;
         // count number of alive Boids
         for (let i = 0; i < this.size; i++) {
+            let A = this._pool[i];
             if (!A.alive) break;
             countAlive++;
         } // for i
+        if (countAlive <= 1) return;
         let G = new Graph(countAlive);
         // construct graph
         for (let i = 0; i < countAlive; i++) {
@@ -104,27 +127,35 @@ class BoidPool {
         for (let i = 0; i < cc.components.length; i++) {
             let avgHeading = 0;
             let avgPos = new Point(0, 0);
+            if (cc.components[i].length <= 1) continue;
             for (let j = 0; j < cc.components[i].length; j++) {
-                let A = this.__pool[j];
+                let A = this._pool[cc.components[i][j]];
                 avgHeading += A.velocity.angle();
                 avgPos.x += A.p.x;
                 avgPos.y += A.p.y;
             } // for j
             avgHeading /= cc.components[i].length;
             avgPos.x /= cc.components[i].length;
-            avgPox.y /= cc.components[i].length;
+            avgPos.y /= cc.components[i].length;
             for (let j = 0; j < cc.components[i].length; j++) {
-                let A = this.__pool[j];
+                let A = this._pool[cc.components[i][j]];
+                let repel = 0;
+                let q = new Point(avgPos.x, avgPos.y);
+                q.rotate(A.p, -A.velocity.angle());
+                let attract = A.p.y - q.y;
                 for (let k = j = 1; k < cc.components[i].length; k++) {
-                    let B = this.__pool[k];
+                    let B = this._pool[cc.components[i][k]];
                     if (A.p.distTo(B.p) <= BoidPool.SEPARATION_DIST) {
-                        // TODO Adjust for separation
-                        // Perhaps try transposing point to perpendicular of current heading?
+                        let q = new Point(B.p.x, B.p.y); // reference point to adjust heading
+                        q.rotate(A.p, -A.velocity.angle());
+                        repel += q.y - A.p.y;
                     } // if
-                } // for j
+                } // for k
+                let theta = ((((repel - 20) / 20) * (Math.PI / 2)) + (avgHeading) + ((attract / 40) * (Math.PI / 2))) / 3;
+                A.adjustHeading(theta);
             } // for j
         } // for i
-    } // adjust function
+    } // adjustHeadings function
 
     /*
      * Draws any in use Boids.
@@ -138,6 +169,7 @@ class BoidPool {
             if (!A.alive) break;
             A.draw();
         } // for i
+        this.adjustHeadings(); // then adjust the headings of the Boids
     } // animate function
 } // BoidPool class
 
