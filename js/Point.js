@@ -57,7 +57,7 @@
     } // ccw function
 
     /*
-     * Rotates this point theta radians around that point.
+     * Rotates this point theta radiusians around that point.
      */
     rotate(that, theta) {
         let xPrime = that.x + (this.x - that.x) * Math.cos(theta) - (this.y - that.y) * Math.sin(theta);

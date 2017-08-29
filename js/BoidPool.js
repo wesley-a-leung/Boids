@@ -27,6 +27,7 @@ class BoidPool {
      * pushes it to the front of the array.
      */
     get(position) {
+        // TODO randomized headings
         let avgVelocity = new Vector(0, 0);
         let avgLocalVelocity = new Vector(0, 0);
         let countAlive = 0;
@@ -142,8 +143,9 @@ class BoidPool {
                 let repel = 0;
                 let q = new Point(avgPos.x, avgPos.y);
                 q.rotate(A.p, -A.velocity.angle());
-                let attract = A.p.y - q.y;
-                for (let k = j = 1; k < cc.components[i].length; k++) {
+                let attract = q.y - A.p.y;
+                // TODO only be affected by a set amount of closest neighbours
+                for (let k = j + 1; k < cc.components[i].length; k++) {
                     let B = this._pool[cc.components[i][k]];
                     if (A.p.distTo(B.p) <= BoidPool.SEPARATION_DIST) {
                         let q = new Point(B.p.x, B.p.y); // reference point to adjust heading
@@ -151,8 +153,9 @@ class BoidPool {
                         repel += q.y - A.p.y;
                     } // if
                 } // for k
-                let theta = ((((repel - 20) / 20) * (Math.PI / 2)) + (avgHeading) + ((attract / 40) * (Math.PI / 2))) / 3;
-                A.adjustHeading(theta);
+                let theta = (((BoidPool.FLOCK_RADIUS - repel) / BoidPool.FLOCK_RADIUS) * (Math.PI / 2)) * BoidPool.REPEL_FACTOR
+                    + (avgHeading) * BoidPool.AVG_HEADING_FACTOR + ((attract / 40) * (Math.PI / 2)) * BoidPool.ATTRACT_FACTOR;
+                A.adjustHeading(theta - A.velocity.angle());
             } // for j
         } // for i
     } // adjustHeadings function
@@ -173,5 +176,8 @@ class BoidPool {
     } // animate function
 } // BoidPool class
 
-BoidPool.FLOCK_RADIUS = 20;
-BoidPool.SEPARATION_DIST = 5;
+BoidPool.FLOCK_RADIUS = 60;
+BoidPool.SEPARATION_DIST = 20;
+BoidPool.AVG_HEADING_FACTOR = 0.25;
+BoidPool.REPEL_FACTOR = 0.15;
+BoidPool.ATTRACT_FACTOR = 0.1;
