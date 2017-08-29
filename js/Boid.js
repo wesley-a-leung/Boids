@@ -66,6 +66,7 @@ class Boid extends DrawableTriangle {
      * Draws the Boid on the canvas.
      */
     draw() {
+        // TODO clear whole board
         this.clearTriangle(); // clear the Boid at the old location
         this.updatePosition();
         this.drawTriangle(); // draws the Boid at the new loation
