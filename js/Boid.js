@@ -32,9 +32,9 @@ class Boid extends DrawableTriangle {
     } // spawn function
 
     /*
-     * Updates the Boid's x and y position based on the velocity.
+     * Updates the Boid's x and y position.
      */
-    updatePosition() {
+    updatePosition(dx, dy) {
         // the Boid can be at most 2 times the Boid's height outside the canvas before it wraps around
         let dax = this.a.x - this.p.x;
         let day = this.a.y - this.p.y;
@@ -42,8 +42,8 @@ class Boid extends DrawableTriangle {
         let dby = this.b.y - this.p.y;
         let dcx = this.c.x - this.p.x;
         let dcy = this.c.y - this.p.y;
-        this.p.x = (this.p.x + 2 * this.height + this.velocity.x + (this.canvasWidth + 4 * this.height)) % (this.canvasWidth + 4 * this.height) - 2 * this.height;
-        this.p.y = (this.p.y + 2 * this.height + this.velocity.y + (this.canvasHeight + 4 * this.height)) % (this.canvasHeight + 4 * this.height) - 2 * this.height;
+        this.p.x = (this.p.x + 2 * this.height + dx + (this.canvasWidth + 4 * this.height)) % (this.canvasWidth + 4 * this.height) - 2 * this.height;
+        this.p.y = (this.p.y + 2 * this.height + dy + (this.canvasHeight + 4 * this.height)) % (this.canvasHeight + 4 * this.height) - 2 * this.height;
         this.a.x = this.p.x + dax;
         this.a.y = this.p.y + day;
         this.b.x = this.p.x + dbx;
@@ -66,7 +66,7 @@ class Boid extends DrawableTriangle {
      * Draws the Boid on the canvas.
      */
     draw() {
-        this.updatePosition();
+        this.updatePosition(this.velocity.x, this.velocity.y);
         this.drawTriangle(); // draws the Boid at the new loation
     } // draw function
 
