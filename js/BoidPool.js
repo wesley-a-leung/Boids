@@ -27,10 +27,7 @@ class BoidPool {
      * pushes it to the front of the array.
      */
     get(position) {
-        // TODO randomized headings
-        let avgVelocity = new Vector(0, 0);
         let avgLocalVelocity = new Vector(0, 0);
-        let countAlive = 0;
         let countLocal = 0;
         for (let i = 0; i < this.size; i++) {
             let A = this._pool[i];
@@ -39,15 +36,13 @@ class BoidPool {
                 countLocal++;
                 avgLocalVelocity = avgLocalVelocity.plus(A.velocity);
             } // if
-            countAlive++;
-            avgVelocity = avgVelocity.plus(A.velocity);
         } // for i
         let velocity = new Vector(1, 1);
         if (countLocal > 0) {
             velocity = new Vector(avgLocalVelocity.x / countLocal, avgLocalVelocity.y / countLocal);
-        } else if (countAlive > 0) {
-            velocity = new Vector(avgVelocity.x / countAlive, avgVelocity.y / countAlive);
-        } // if
+        } else {
+            velocity.rotate(Math.random() * (2 * Math.PI));
+        } // if else
         let color = "#FFFFFF";
         if (!this._pool[this.size - 1].alive) {
             this._pool[this.size - 1].spawn(position, velocity, color);
@@ -136,6 +131,7 @@ class BoidPool {
                 avgPos.y += A.p.y;
             } // for j
             avgHeading /= cc.components[i].length;
+            console.log(avgHeading);
             avgPos.x /= cc.components[i].length;
             avgPos.y /= cc.components[i].length;
             for (let j = 0; j < cc.components[i].length; j++) {
@@ -144,18 +140,20 @@ class BoidPool {
                 let q = new Point(avgPos.x, avgPos.y);
                 q.rotate(A.p, -A.velocity.angle());
                 let attract = q.y - A.p.y;
-                // TODO only be affected by a set amount of closest neighbours
+                // TODO only be affected by a set amount of closest neighbours?
                 for (let k = j + 1; k < cc.components[i].length; k++) {
                     let B = this._pool[cc.components[i][k]];
                     if (A.p.distTo(B.p) <= BoidPool.SEPARATION_DIST) {
                         let q = new Point(B.p.x, B.p.y); // reference point to adjust heading
                         q.rotate(A.p, -A.velocity.angle());
-                        repel += q.y - A.p.y;
+                        repel += (A.p.y - q.y) / Math.abs(A.p.y - q.y) * (BoidPool.SEPARATION_DIST - Math.abs(A.p.y - q.y));
                     } // if
                 } // for k
-                let theta = (((BoidPool.FLOCK_RADIUS - repel) / BoidPool.FLOCK_RADIUS) * (Math.PI / 2)) * BoidPool.REPEL_FACTOR
-                    + (avgHeading) * BoidPool.AVG_HEADING_FACTOR + ((attract / 40) * (Math.PI / 2)) * BoidPool.ATTRACT_FACTOR;
-                A.adjustHeading(theta - A.velocity.angle());
+                repel /= cc.components[i].length;
+                attract /= cc.components[i].length;
+                let theta = ((repel) * (Math.PI / 2)) * BoidPool.REPEL_FACTOR + (avgHeading - A.velocity.angle()) * BoidPool.AVG_HEADING_FACTOR
+                    + ((attract) * (Math.PI / 2)) * BoidPool.ATTRACT_FACTOR + (Math.random() * 2 * BoidPool.RANDOM_FACTOR - BoidPool.RANDOM_FACTOR);
+                A.adjustHeading(theta);
             } // for j
         } // for i
     } // adjustHeadings function
@@ -164,6 +162,7 @@ class BoidPool {
      * Draws any in use Boids.
      */
     animate() {
+        this.context.clearRect(0, 0, this.canvasWidth, this.canvasHeight); // clears old canvas
         this.checkClick(); // first checks for Boids that have been clicked and removes them if necessary
         for (let i = 0; i < this.size; i++) {
             let A = this._pool[i]; // for non modification actions
@@ -179,5 +178,6 @@ class BoidPool {
 BoidPool.FLOCK_RADIUS = 60;
 BoidPool.SEPARATION_DIST = 20;
 BoidPool.AVG_HEADING_FACTOR = 0.25;
-BoidPool.REPEL_FACTOR = 0.15;
+BoidPool.REPEL_FACTOR = 0.1;
 BoidPool.ATTRACT_FACTOR = 0.1;
+BoidPool.RANDOM_FACTOR = 0.01;
