@@ -21,8 +21,8 @@
      * Returns the distance squared between this Point and that Point (adjusting for canvas wraparound).
      */
     distSqTo(that) {
-        let deltaX = Math.min(Math.abs(this.x - that.x), Math.abs(this.x - that.x + this.context.canvasWidth));
-        let deltaY = Math.min(Math.abs(this.y - that.y), Math.abs(this.y - that.y + this.context.canvasHeight));
+        let deltaX = Math.min(Math.abs(this.x - that.x), Math.abs(this.x - that.x + this.canvasWidth));
+        let deltaY = Math.min(Math.abs(this.y - that.y), Math.abs(this.y - that.y + this.canvasHeight));
         return deltaX * deltaX + deltaY * deltaY;
     } // distSqTo function
 
