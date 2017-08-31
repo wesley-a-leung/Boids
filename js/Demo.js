@@ -21,6 +21,9 @@ class Demo {
         BoidPool.prototype.context = this.canvas.getContext('2d');
         BoidPool.prototype.canvasWidth = this.canvas.width;
         BoidPool.prototype.canvasHeight = this.canvas.height;
+        Point.prototype.context = this.canvas.getContext('2d');
+        Point.prototype.canvasWidth = this.canvas.width;
+        Point.prototype.canvasHeight = this.canvas.height;
         this.boidPool = new BoidPool(1000); // maximum of 1000 Boids can be displayed on screen (to prevent lag)
         this.boidPool.init();
         this.canvas.addEventListener('click', function(event) { // spawns a particle on click if shift is not down

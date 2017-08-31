@@ -14,14 +14,16 @@
      * Returns the distance between this Point and that Point.
      */
     distTo(that) {
-        return Math.sqrt((this.x - that.x) * (this.x - that.x) + (this.y - that.y) * (this.y - that.y));
+        return Math.sqrt(this.distSqTo(that));
     } // distTo function
 
     /*
-     * Returns the distance squared between this Point and that Point.
+     * Returns the distance squared between this Point and that Point (adjusting for canvas wraparound).
      */
     distSqTo(that) {
-        return (this.x - that.x) * (this.x - that.x) + (this.y - that.y) * (this.y - that.y);
+        let deltaX = Math.min(Math.abs(this.x - that.x), Math.abs(this.x - that.x + this.context.canvasWidth));
+        let deltaY = Math.min(Math.abs(this.y - that.y), Math.abs(this.y - that.y + this.context.canvasHeight));
+        return deltaX * deltaX + deltaY * deltaY;
     } // distSqTo function
 
     /*
