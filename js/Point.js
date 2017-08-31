@@ -10,12 +10,21 @@
         this.y = y;
     } // constructor
 
-        /*
-     * Returns the distance squared between this Point and that Point.
+    /*
+     * Returns the distance between this Point and that Point.
+     */
+    distTo(that) {
+        return Math.sqrt(this.distSqTo(that));
+    } // distTo function
+
+    /*
+     * Returns the distance squared between this Point and that Point (adjusting for canvas wraparound).
      */
     distSqTo(that) {
-        return (this.x - that.x) * (this.x - that.x) + (this.y - that.y) * (this.y - that.y);
-    } // calcDistSq function
+        let deltaX = Math.min(Math.abs(this.x - that.x), Math.abs(this.x - that.x + this.canvasWidth));
+        let deltaY = Math.min(Math.abs(this.y - that.y), Math.abs(this.y - that.y + this.canvasHeight));
+        return deltaX * deltaX + deltaY * deltaY;
+    } // distSqTo function
 
     /*
      * Returns the angle from this Point to that Point.
@@ -29,7 +38,7 @@
      */
     r() {
         return Math.sqrt(this.x * this.x + this.y * this.y);
-    } // magnitude function
+    } // r function
 
     /*
      * Returns the polar angle (between -pi and pi) of the point.
@@ -50,7 +59,7 @@
     } // ccw function
 
     /*
-     * Rotates this point theta degrees around that point.
+     * Rotates this point theta radiusians around that point.
      */
     rotate(that, theta) {
         let xPrime = that.x + (this.x - that.x) * Math.cos(theta) - (this.y - that.y) * Math.sin(theta);
@@ -63,7 +72,7 @@
      * Returns whether this Point coordinate is inside the triangle a, b, c.
      */
     inside(a, b, c) {
-        if (ccw(a, b, c) == 1) return ccw(a, this, b) <= 0 && ccw(b, this, c) <= 0 && ccw(c, this, a) <= 0;
-        else return ccw(a, this, b) >= 0 && ccw(b, this, c) >= 0 && ccw(c, this, a) >= 0;
+        if (Point.ccw(a, b, c) == 1) return Point.ccw(a, this, b) <= 0 && Point.ccw(b, this, c) <= 0 && Point.ccw(c, this, a) <= 0;
+        else return Point.ccw(a, this, b) >= 0 && Point.ccw(b, this, c) >= 0 && Point.ccw(c, this, a) >= 0;
     } // inside function
 } // Point class
