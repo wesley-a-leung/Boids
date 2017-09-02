@@ -42,8 +42,8 @@ class Boid extends DrawableTriangle {
         let dby = this.b.y - this.p.y;
         let dcx = this.c.x - this.p.x;
         let dcy = this.c.y - this.p.y;
-        this.p.x = (this.p.x + 2 * this.height + dx + (this.canvasWidth + 4 * this.height)) % (this.canvasWidth + 4 * this.height) - 2 * this.height;
-        this.p.y = (this.p.y + 2 * this.height + dy + (this.canvasHeight + 4 * this.height)) % (this.canvasHeight + 4 * this.height) - 2 * this.height;
+        this.p.x = (this.p.x + canvasBorder + dx + (this.canvasWidth + 2 * canvasBorder)) % (this.canvasWidth + 2 * canvasBorder) - canvasBorder;
+        this.p.y = (this.p.y + canvasBorder + dy + (this.canvasHeight + 2 * canvasBorder)) % (this.canvasHeight + 2 * canvasBorder) - canvasBorder;
         this.a.x = this.p.x + dax;
         this.a.y = this.p.y + day;
         this.b.x = this.p.x + dbx;
@@ -56,6 +56,12 @@ class Boid extends DrawableTriangle {
      * Updates the Boid's velocity and rotates the triangle.
      */
     adjustHeading(theta) {
+        // fallback in case of failure
+        if (Math.abs(this.velocity.magnitude() - 2.0) > 1e-6) {
+            let angle = this.velocity.angle();
+            this.velocity = new Vector(2, 0);
+            this.velocity.rotate(angle);
+        } // if
         this.velocity.rotate(theta);
         this.a.rotate(this.p, theta);
         this.b.rotate(this.p, theta);

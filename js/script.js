@@ -1,4 +1,5 @@
 var demo = new Demo();
+var canvasBorder = 40;
 /**
  * Initializes the demo.
  */
