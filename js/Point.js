@@ -18,13 +18,29 @@
     } // distTo function
 
     /*
-     * Returns the distance squared between this Point and that Point (adjusting for canvas wraparound).
+     * Returns the distance squared between this Point and that Point.
      */
     distSqTo(that) {
-        let deltaX = Math.min(Math.abs(this.x - that.x), Math.abs(this.x - that.x + this.canvasWidth));
-        let deltaY = Math.min(Math.abs(this.y - that.y), Math.abs(this.y - that.y + this.canvasHeight));
+        let deltaX = Math.abs(this.x - that.x);
+        let deltaY = Math.abs(this.y - that.y);
         return deltaX * deltaX + deltaY * deltaY;
     } // distSqTo function
+
+    /*
+     * Returns the distance between this Point and that Point, adjusting for canvas wraparound.
+     */
+    wrapDistTo(that) {
+        return Math.sqrt(this.wrapDistSqTo(that));
+    } // wrapDistTo function
+
+    /*
+     * Returns the distance squared between this Point and that Point adjusting for canvas wraparound.
+     */
+    wrapDistSqTo(that) {
+        let deltaX = Math.min(Math.abs(this.x - that.x), this.canvasWidth + 2 * canvasBorder - Math.abs(this.x - that.x));
+        let deltaY = Math.min(Math.abs(this.y - that.y), this.canvasHeight + 2 * canvasBorder - Math.abs(this.y - that.y));
+        return deltaX * deltaX + deltaY * deltaY;
+    } // wrapDistSqTo function
 
     /*
      * Returns the angle from this Point to that Point.

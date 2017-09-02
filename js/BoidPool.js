@@ -32,17 +32,14 @@ class BoidPool {
         for (let i = 0; i < this.size; i++) {
             let A = this._pool[i];
             if (!A.alive) break; // all Boids afterward are 'dead'
-            if (position.distTo(A.p) <= BoidPool.FLOCK_RADIUS) {
+            if (position.wrapDistTo(A.p) <= BoidPool.FLOCK_RADIUS) {
                 countLocal++;
                 avgLocalVelocity = avgLocalVelocity.plus(A.velocity);
             } // if
         } // for i
-        let velocity = new Vector(1, 1);
-        if (countLocal > 0) {
-            velocity = new Vector(avgLocalVelocity.x / countLocal, avgLocalVelocity.y / countLocal);
-        } else {
-            velocity.rotate(Math.random() * (2 * Math.PI));
-        } // if else
+        let velocity = new Vector(2, 0);
+        if (countLocal > 0) velocity = new Vector(avgLocalVelocity.x / countLocal, avgLocalVelocity.y / countLocal);
+        else velocity.rotate(Math.random() * (2 * Math.PI));
         let color = "#FFFFFF";
         if (!this._pool[this.size - 1].alive) {
             this._pool[this.size - 1].spawn(position, velocity, color);
@@ -60,9 +57,7 @@ class BoidPool {
         for (let i = 0; i < this.size; i++) {
             let A = this._pool[i]; // for non modification actions
             if (!A.alive) break; // all Boids afterward are 'dead'
-            if (A.clicked) { // Boid has been clicked and should be removed
-                marked.add(i);
-            } // if
+            if (A.clicked) marked.add(i); // Boid has been clicked and should be removed
         } // for i
         let arr = Array.from(marked); // converts to array for sorting
         arr.sort();
@@ -112,11 +107,24 @@ class BoidPool {
         if (countAlive <= 1) return;
         let G = new Graph(countAlive);
         // construct graph
+        let markedX = new Set(); // set of Boids that needs the x value to be adjusted for wraparound
+        let markedY = new Set(); // set of Boids that needs the y value to be adjusted for wraparound
         for (let i = 0; i < countAlive; i++) {
             let A = this._pool[i];
             for (let j = i + 1; j < countAlive; j++) {
                 let B = this._pool[j];
-                if (A.p.distTo(B.p) <= BoidPool.FLOCK_RADIUS) G.addEdge(i, j);
+                if (A.p.wrapDistTo(B.p) <= BoidPool.FLOCK_RADIUS) {
+                    G.addEdge(i, j);
+                    // adjust for wraparound
+                    if (Math.abs(A.p.x - B.p.x) > this.canvasWidth + 2 * canvasBorder - Math.abs(A.p.x - B.p.x)) {
+                        if (A.p.x < B.p.x) markedX.add(i)
+                        else markedX.add(j);
+                    } // if
+                    if (Math.abs(A.p.y - B.p.y) > this.canvasHeight + 2 * canvasBorder - Math.abs(A.p.y - B.p.y)) {
+                        if (A.p.y < B.p.y) markedY.add(i);
+                        else markedY.add(j);
+                    } // if
+                } // if
             } // for j
         } // for i
         let cc = new ConnectedComponents(G);
@@ -129,28 +137,37 @@ class BoidPool {
                 avgHeading += A.velocity.angle();
                 avgPos.x += A.p.x;
                 avgPos.y += A.p.y;
+                if (markedX.has(cc.components[i][j])) avgPos.x += this.canvasWidth + 2 * canvasBorder; // adjust for wraparound
+                if (markedY.has(cc.components[i][j])) avgPos.y += this.canvasHeight + 2 * canvasBorder;
             } // for j
             avgHeading /= cc.components[i].length;
-            console.log(avgHeading);
             avgPos.x /= cc.components[i].length;
             avgPos.y /= cc.components[i].length;
             for (let j = 0; j < cc.components[i].length; j++) {
                 let A = this._pool[cc.components[i][j]];
+                if (markedX.has(cc.components[i][j])) A.p.x += this.canvasWidth + 2 * canvasBorder; // adjust for wraparound
+                if (markedY.has(cc.components[i][j])) A.p.y += this.canvasHeight + 2 * canvasBorder;
                 let repel = 0;
                 let q = new Point(avgPos.x, avgPos.y);
                 q.rotate(A.p, -A.velocity.angle());
                 let attract = q.y - A.p.y;
-                // TODO only be affected by a set amount of closest neighbours?
-                for (let k = j + 1; k < cc.components[i].length; k++) {
+                for (let k = 0; k < cc.components[i].length; k++) {
+                    if (j == k) continue;
                     let B = this._pool[cc.components[i][k]];
-                    if (A.p.distTo(B.p) <= BoidPool.SEPARATION_DIST) {
+                    if (markedX.has(cc.components[i][k])) B.p.x += this.canvasWidth + 2 * canvasBorder; // adjust for wraparound
+                    if (markedY.has(cc.components[i][k])) B.p.y += this.canvasHeight + 2 * canvasBorder;
+                    if (A.p.wrapDistTo(B.p) <= BoidPool.SEPARATION_DIST) {
                         let q = new Point(B.p.x, B.p.y); // reference point to adjust heading
                         q.rotate(A.p, -A.velocity.angle());
                         repel += (A.p.y - q.y) / Math.abs(A.p.y - q.y) * (BoidPool.SEPARATION_DIST - Math.abs(A.p.y - q.y));
                     } // if
+                    if (markedX.has(cc.components[i][k])) B.p.x -= this.canvasWidth + 2 * canvasBorder; // adjust back
+                    if (markedY.has(cc.components[i][k])) B.p.y -= this.canvasHeight + 2 * canvasBorder;
                 } // for k
                 repel /= cc.components[i].length;
                 attract /= cc.components[i].length;
+                if (markedX.has(cc.components[i][j])) A.p.x -= this.canvasWidth + 2 * canvasBorder; // adjust back
+                if (markedY.has(cc.components[i][j])) A.p.y -= this.canvasHeight + 2 * canvasBorder;
                 let theta = ((repel) * (Math.PI / 2)) * BoidPool.REPEL_FACTOR + (avgHeading - A.velocity.angle()) * BoidPool.AVG_HEADING_FACTOR
                     + ((attract) * (Math.PI / 2)) * BoidPool.ATTRACT_FACTOR + (Math.random() * 2 * BoidPool.RANDOM_FACTOR - BoidPool.RANDOM_FACTOR);
                 A.adjustHeading(theta);
