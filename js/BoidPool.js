@@ -144,6 +144,7 @@ class BoidPool {
                 if (markedY.has(j)) avgPos.y += this.canvasHeight + 2 * canvasBorder;
             } // for j
             avgHeading /= cc.components[i].length;
+            avgHeading += (Math.random() * 2 * BoidPool.FLOCK_RANDOM_FACTOR - BoidPool.FLOCK_RANDOM_FACTOR);
             avgPos.x /= cc.components[i].length;
             avgPos.y /= cc.components[i].length;
             for (let j = 0; j < cc.components[i].length; j++) {
@@ -172,7 +173,7 @@ class BoidPool {
                 if (markedX.has(j)) A.p.x -= this.canvasWidth + 2 * canvasBorder; // adjust back
                 if (markedY.has(j)) A.p.y -= this.canvasHeight + 2 * canvasBorder;
                 let theta = ((repel) * (Math.PI / 2)) * BoidPool.REPEL_FACTOR + (avgHeading - A.velocity.angle()) * BoidPool.AVG_HEADING_FACTOR
-                    + ((attract) * (Math.PI / 2)) * BoidPool.ATTRACT_FACTOR + (Math.random() * 2 * BoidPool.RANDOM_FACTOR - BoidPool.RANDOM_FACTOR);
+                    + ((attract) * (Math.PI / 2)) * BoidPool.ATTRACT_FACTOR + (Math.random() * 2 * BoidPool.BOID_RANDOM_FACTOR - BoidPool.BOID_RANDOM_FACTOR);
                 A.adjustHeading(theta);
             } // for j
         } // for i
@@ -200,4 +201,5 @@ BoidPool.SEPARATION_DIST = 20;
 BoidPool.AVG_HEADING_FACTOR = 0.25;
 BoidPool.REPEL_FACTOR = 0.1;
 BoidPool.ATTRACT_FACTOR = 0.1;
-BoidPool.RANDOM_FACTOR = 0.01;
+BoidPool.FLOCK_RANDOM_FACTOR = 0.3;
+BoidPool.BOID_RANDOM_FACTOR = 0.1;
