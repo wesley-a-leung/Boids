@@ -104,7 +104,6 @@ class BoidPool {
             if (!A.alive) break;
             countAlive++;
         } // for i
-        if (countAlive <= 1) return;
         let G = new Graph(countAlive);
         // construct graph
         for (let i = 0; i < countAlive; i++) {
@@ -116,7 +115,6 @@ class BoidPool {
         } // for i
         let cc = new ConnectedComponents(G);
         for (let i = 0; i < cc.components.length; i++) {
-            if (cc.components[i].length <= 1) continue;
             let markedX = new Set(); // set of Boids that needs the x value to be adjusted for wraparound
             let markedY = new Set(); // set of Boids that needs the y value to be adjusted for wraparound
             for (let j = 0; j < cc.components[i].length; j++) {
