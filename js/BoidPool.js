@@ -1,3 +1,6 @@
+var colors = ["#FF0101", "#FFFF01", "#018001", "#01FFFF", "#0101FF", "#800180"];
+var colorLumAdjFactor = 2.0;
+
 /**
  * BoidPool class, which will create a pool that holds Boid objects to be managed to prevent
  * garbage collection. This prevents constant creation and deletion of Boids.
@@ -40,7 +43,9 @@ class BoidPool {
         let velocity = new Vector(2, 0);
         if (countLocal > 0) velocity = new Vector(avgLocalVelocity.x / countLocal, avgLocalVelocity.y / countLocal);
         else velocity.rotate(Math.random() * (2 * Math.PI));
-        let color = "#FFFFFF";
+        let colorInd = parseInt(Math.random() * colors.length, 10);
+        let lumAdj = Math.random() * colorLumAdjFactor - (colorLumAdjFactor / 2.0);
+        let color = Color.colorLuminance(colors[colorInd], lumAdj);
         if (!this._pool[this.size - 1].alive) {
             this._pool[this.size - 1].spawn(position, velocity, color);
             this._pool.unshift(this._pool.pop());

@@ -6,6 +6,7 @@
         <script type = "text/javascript" src = "js/jquery-3.1.1.min.js"></script>
         <script type = "text/javascript" src = "js/jquery-ui.min.js"></script>
         <!-- Modularizing code -->
+        <script type = "text/javascript" src = "js/Color.js"></script>
         <script type = "text/javascript" src = "js/Point.js"></script>
         <script type = "text/javascript" src = "js/Vector.js"></script>
         <script type = "text/javascript" src = "js/Drawable.js"></script>
@@ -19,11 +20,13 @@
         <title>Boids</title>
     </head>
     <body onload = "init()">
-        <div id = "container">
-            <h1>Boids</h1>
-        </div>
         <div id = "canvasContainter">
-            <canvas id = "demo" width = "900" height = "600"></canvas> <!-- Main canvas -->
+            <canvas id = "demo"></canvas> <!-- Main canvas -->
         </div>
     </body>
+    <script type="text/javascript">
+        canvas = document.getElementById("demo");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    </script>
 </html>
